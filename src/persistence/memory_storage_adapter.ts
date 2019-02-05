@@ -1,6 +1,6 @@
 import { IPersistenceAdapter } from './persistence_adapter';
 import IUser from '../models/user';
-import { DuplicatedEntryError, EntityNotFoundError } from './../utils/api_error';
+import { UserAlreadyExistsError, InvalidCredentialError } from './../utils/api_error';
 
 class MemoryStorageAdapter implements IPersistenceAdapter {
   users: {[username:string]: IUser}
@@ -9,18 +9,18 @@ class MemoryStorageAdapter implements IPersistenceAdapter {
     this.users = {};
   }
 
-  insertUser(user: IUser): Promise<void>{
+  async insertUser(user: IUser): Promise<void>{
     if (this.users[user.username] !== undefined) {
-      throw DuplicatedEntryError();
+      throw UserAlreadyExistsError();
     }
 
     this.users[user.username] = user;
     return;
   }
 
-  getUserByUsername(username:string): Promise<IUser>{
+  async getUserByUsername(username:string): Promise<IUser>{
     if (this.users[username] === undefined) {
-      throw EntityNotFoundError();
+      throw InvalidCredentialError();
     }
 
     return Promise.resolve(this.users[username]);
