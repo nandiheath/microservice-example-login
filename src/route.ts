@@ -9,15 +9,56 @@ const {
 const authController = require('./controllers/auth_controller');
 
 export const route = (server) => {
-  // auth
-  server.post('/auth/local', asyncMiddleware(authController.login));
-  server.post('/auth/register', asyncMiddleware(authController.register));
-  server.get('/me', passport.authenticate('jwt'), asyncMiddleware(authController.me));
-  server.post('/auth/facebook', passportAuthenicate('facebook'), asyncMiddleware(authController.facebookLogin));
 
-  server.get('/', (req, res) => {
-    res.send({
-      hello: 'world'
-    });
-  });
+  /**
+   *
+   * @api {post} /auth/facebook Facebook Login
+   * @apiName FacebookLogin
+   * @apiGroup auth
+   * @apiVersion  1.0.0
+   * @apiHeader (AuthHeader) {String} Content-Type application/json
+   * @apiParamExample {json} Request Example:
+                     {
+                       access_token: ''
+                    }
+  * @apiSuccessExample {type} Success-Response:
+  * {
+  *     success: true,
+  *     data: {
+  *        user: {
+  *            id: String,
+  *            username: String
+  *        },
+  *        token: String
+  *      }
+  * }
+  */
+  server.post('/login', asyncMiddleware(authController.login));
+
+
+  /**
+   *
+   * @api {post} /auth/facebook Facebook Login
+   * @apiName FacebookLogin
+   * @apiGroup auth
+   * @apiVersion  1.0.0
+   * @apiHeader (AuthHeader) {String} Content-Type application/json
+   * @apiParamExample {json} Request Example:
+                     {
+                       access_token: ''
+                    }
+  * @apiSuccessExample {type} Success-Response:
+  * {
+  *     success: true,
+  *     data: {
+  *        user: {
+  *            id: String,
+  *            username: String
+  *        },
+  *        token: String
+  *      }
+  * }
+  */
+  server.post('/register', asyncMiddleware(authController.register));
+  // server.get('/me', passport.authenticate('jwt'), asyncMiddleware(authController.me));
 };

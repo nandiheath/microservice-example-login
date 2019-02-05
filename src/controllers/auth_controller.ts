@@ -1,9 +1,9 @@
-import Errors from 'restify-errors';
+import { UnauthoirzedRequestError, InvalidRequestError } from './../utils/api_error';
 // const { logger } = require('./../utils/logger');
-import { validate } from './../utils/validator';
 import User from './../models/user';
 import { sign } from './../auth/auth';
-import { formatResponse, getUserFromReq } from '../utils/api_helper';
+import { formatResponse } from '../utils/api_helper';
+import PersistenceAdapter from './../persistence/persistence_adapter';
 
 /**
  * POST /auth/login
@@ -11,23 +11,22 @@ import { formatResponse, getUserFromReq } from '../utils/api_helper';
  * @param {*} res
  * @param {*} next
  */
-async function login(req, res, next) {
-  validate(req, { password: 'string' });
-  const query:any = {};
-  if (req.body.mobile) {
-    query.mobile = req.body.mobile;
-  } else if (req.body.username) {
-    query.username = req.body.username;
+export const login = async (req, res, next) => {
+  const { username }: { username: string }= req.body;
+  // TODO: may be use a library to validate the request
+  if (username === undefined) {
+    throw InvalidRequestError('username field is missing');
   }
 
-  const user = await User.findOne(query).exec();
+  // Will throw user not found error
+  const user:User = await PersistenceAdapter.getUserByUsername(username);
   let authenticated = false;
   if (user !== null) {
     authenticated = await user.verifyPassword(req.body.password);
   }
 
   if (!authenticated) {
-    throw new Errors.UnauthorizedError('password incorrect');
+    throw UnauthoirzedRequestError();
   } else {
     const token = await sign(user);
     res.send(formatResponse({ user, token }));
@@ -41,16 +40,20 @@ async function login(req, res, next) {
  * @param {*} res
  * @param {*} next
  */
-async function register(req, res, next) {
-  validate(req, { username: 'string', password: 'string', mobile: 'string' });
-  const { username, password, mobile } = req.body;
-  const passwordHash = await User.hashPassword(password);
-  const user = new User({
-    username,
-    mobile,
-    password_hash: passwordHash
-  });
-  await user.save();
+export const register = async (req, res, next) => {
+  const { username, password } = req.body;
+  if (username === undefined) {
+    throw InvalidRequestError('username field is missing');
+  }
+  if (password === undefined) {
+    throw InvalidRequestError('password field is missing');
+  }
+
+  const user = new User(username);
+  user.setPassword(password);
+
+  PersistenceAdapter.insertUser(user);
+
   const token = await sign(user);
   res.send(formatResponse({
     user,
@@ -60,48 +63,3 @@ async function register(req, res, next) {
 }
 
 
-/**
- *
- * @api {post} /auth/facebook Facebook Login
- * @apiName FacebookLogin
- * @apiGroup auth
- * @apiVersion  1.0.0
- * @apiHeader (AuthHeader) {String} Content-Type application/json
- * @apiParamExample {json} Request Example:
-                   {
-                     access_token: ''
-                   }
- * @apiSuccessExample {type} Success-Response:
- * {
- *     success: true,
- *     data: {
- *        user: {
- *            id: String,
- *            username: String
- *        },
- *        token: String
- *      }
- * }
- */
-async function facebookLogin(req, res, next) {
-  const user = await getUserFromReq(req);
-  const token = await sign(user);
-  res.send(formatResponse({ user, token }));
-  return next();
-}
-
-
-async function me(req, res, next) {
-  const user = await getUserFromReq(req);
-  res.send(formatResponse({
-    user
-  }));
-  return next();
-}
-
-module.exports = {
-  login,
-  register,
-  facebookLogin,
-  me
-};
