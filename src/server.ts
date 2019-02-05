@@ -10,31 +10,11 @@ dotenv.config();
 import logger from './utils/logger';
 import { route } from './route';
 import {
-  MONGODB_HOST, MONGODB_DATABASE, MONGODB_USER, MONGODB_PASSWORD, LOGGER_LEVEL,
+  LOGGER_LEVEL,
 } from './common/env';
 
 // use the passport
 import './auth/passport';
-
-// Set up default mongoose connection
-const mongoDB = `mongodb://${MONGODB_HOST}/${MONGODB_DATABASE}`;
-const opt = {
-  useNewUrlParser: true,
-  user: null,
-  pass: null,
-  auth: null,
-};
-
-if (MONGODB_USER !== '') {
-  opt.user = MONGODB_USER;
-  opt.pass = MONGODB_PASSWORD;
-  opt.auth = {
-    authdb: 'admin',
-  };
-}
-
-mongoose.connect(mongoDB, opt);
-mongoose.Promise = require('bluebird');
 
 const server = restify.createServer({
   name: 'myapp',
