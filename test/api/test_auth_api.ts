@@ -139,19 +139,5 @@ describe('api', () => {
       expect(res.body.error_code).to.be.eq(ERROR_WRONG_CREDENTIAL);
     });
 
-    it('it should return error if the access token expired', async() => {
-      let res = await chai.request(server).post('/register').type('json').send({
-        username: 'abc',
-        password: 'abc',
-      });
-      expect(res.status).to.be.eq(200);
-
-      res = await chai.request(server).post('/login').type('json').send({
-        username: 'abc',
-        password: 'abc',
-      });
-      expect(res.status).to.be.eq(401);
-      expect(res.body.error_code).to.be.eq(ERROR_TOKEN_EXPIRED);
-    });
   });
 });
