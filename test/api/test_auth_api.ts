@@ -22,8 +22,9 @@ describe('api', () => {
       expect(res.status).to.be.eq(200);
       expect(res.body.success).to.be.true;
       expect(res.body.success).to.be.a('boolean');
-      expect(res.body.access_token).to.be.not.null;
-      expect(res.body.access_token).to.be.a('string');
+      expect(res.body.data.access_token).to.be.not.null;
+      expect(res.body.data.access_token).to.be.not.undefined;
+      expect(res.body.data.access_token).to.be.a('string');
     });
 
     it('it should return error 401 if username is not provided', async() => {
@@ -47,18 +48,21 @@ describe('api', () => {
     });
 
     it('it should return error for duplicated username', async() => {
-      let res = await chai.request(server).post('/register').type('json').send({
+      var requester = chai.request(server).keepOpen();
+      let res = await requester.post('/register').type('json').send({
         username: 'abc',
         password: 'abc',
       });
       expect(res.status).to.be.eq(200);
 
-      res = await chai.request(server).post('/register').type('json').send({
+      res = await requester.post('/register').type('json').send({
         username: 'abc',
         password: 'abc',
       });
       expect(res.status).to.be.eq(400);
       expect(res.body.error_code).to.be.eq(ERROR_USER_ALREADY_EXISTS);
+
+     requester.close();
     });
   });
 
@@ -78,11 +82,12 @@ describe('api', () => {
       expect(res.status).to.be.eq(200);
       expect(res.body.success).to.be.true;
       expect(res.body.success).to.be.a('boolean');
-      expect(res.body.access_token).to.be.not.null;
-      expect(res.body.access_token).to.be.a('string');
+      expect(res.body.data.access_token).to.be.not.null;
+      expect(res.body.data.access_token).to.be.not.undefined;
+      expect(res.body.data.access_token).to.be.a('string');
     });
 
-    it('it should return error 403 if username is not provided', async() => {
+    it('it should return error 400 if username is not provided', async() => {
       let res = await chai.request(server).post('/login').type('json').send({
         password: 'abc',
       });
@@ -92,8 +97,16 @@ describe('api', () => {
 
     });
 
-    it('it should return error 403 if password is not provided', async() => {
-      let res = await chai.request(server).post('/login').type('json').send({
+    it('it should return error 400 if password is not provided', async() => {
+      // First register a user
+      let res;
+      res = await chai.request(server).post('/register').type('json').send({
+        username: 'abc',
+        password: 'abc'
+      });
+      expect(res.status).to.be.eq(200);
+
+      res = await chai.request(server).post('/login').type('json').send({
         username: 'abc'
       });
       expect(res.status).to.be.eq(400);

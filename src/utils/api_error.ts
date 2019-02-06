@@ -22,7 +22,7 @@ export const UserAlreadyExistsError = () => new Errors.BadRequestError({ code: E
 export const UserNotFoundError = () => new Errors.BadRequestError({ code: ERROR_WRONG_CREDENTIAL }, 'incorrect username/password');
 
 // Error when trying to login with wrong password
-export const InvalidCredentialError = () => new Errors.BadRequestError({ code: ERROR_WRONG_CREDENTIAL }, 'incorrect username/password');
+export const InvalidCredentialError = () => new Errors.UnauthorizedError({ code: ERROR_WRONG_CREDENTIAL }, 'incorrect username/password');
 
 // Error when incorrect payload fields
 export const InvalidRequestError = (msg) => new Errors.BadRequestError({ code: ERROR_ENTITY_INVALID_REQUEST }, msg);

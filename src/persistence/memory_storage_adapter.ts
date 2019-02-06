@@ -19,11 +19,12 @@ class MemoryStorageAdapter implements IPersistenceAdapter {
   }
 
   async getUserByUsername(username:string): Promise<IUser>{
-    if (this.users[username] === undefined) {
+    const user:IUser = this.users[username];
+    if (user === undefined) {
       throw InvalidCredentialError();
     }
 
-    return Promise.resolve(this.users[username]);
+    return Promise.resolve(user);
   }
 }
 
