@@ -60,4 +60,22 @@ server.listen(SERVER_PORT, () => {
   logger.info(`server istening at ${server.url}`);
 });
 
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM signal received.');
+  shutdown();
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT signal received.');
+  shutdown();
+});
+
+const shutdown = () => {
+  server.close(() => {
+    logger.info('api server shutdown completely');
+    process.exit(1);
+  });
+}
+
 export default server;
