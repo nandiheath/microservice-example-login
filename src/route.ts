@@ -18,6 +18,8 @@ export const route = (server) => {
    * @apiGroup auth
    * @apiVersion  1.0.0
    * @apiHeader (AuthHeader) {String} Content-Type application/json
+   * @apiParam {String} username     Mandatory username.
+   * @apiParam {String} password     Mandatory password.
    * @apiParamExample {json} Request Example:
                     {
                        username: 'user',
@@ -43,6 +45,8 @@ export const route = (server) => {
    * @apiGroup auth
    * @apiVersion  1.0.0
    * @apiHeader (AuthHeader) {String} Content-Type application/json
+   * @apiParam {String} username     Mandatory username.
+   * @apiParam {String} password     Mandatory password.
    * @apiParamExample {json} Request Example:
                     {
                        username: 'user',
