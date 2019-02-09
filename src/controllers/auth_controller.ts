@@ -1,4 +1,4 @@
-import { UnauthoirzedRequestError, InvalidRequestError } from './../utils/api_error';
+import { UnthenticatedRequestError, InvalidRequestError } from './../utils/api_error';
 // const { logger } = require('./../utils/logger');
 import User from './../models/user';
 import { sign } from './../auth/auth';
@@ -12,10 +12,14 @@ import PersistenceAdapter from './../persistence/persistence_adapter';
  * @param {*} next
  */
 export const login = async (req, res, next) => {
-  const { username }: { username: string }= req.body;
+  const { username, password }: { username: string, password: string }= req.body;
   // TODO: may be use a library to validate the request
   if (username === undefined) {
     throw InvalidRequestError('username field is missing');
+  }
+
+  if (password === undefined) {
+    throw InvalidRequestError('password field is missing');
   }
 
   // Will throw user not found error
@@ -26,10 +30,10 @@ export const login = async (req, res, next) => {
   }
 
   if (!authenticated) {
-    throw UnauthoirzedRequestError();
+    throw UnthenticatedRequestError();
   } else {
-    const token = await sign(user);
-    res.send(formatResponse({ user, token }));
+    const access_token = await sign(user);
+    res.send(formatResponse({ user, access_token }));
     return next();
   }
 }
@@ -50,14 +54,14 @@ export const register = async (req, res, next) => {
   }
 
   const user = new User(username);
-  user.setPassword(password);
+  await user.setPassword(password);
 
-  PersistenceAdapter.insertUser(user);
+  await PersistenceAdapter.insertUser(user);
 
-  const token = await sign(user);
+  const access_token = await sign(user);
   res.send(formatResponse({
     user,
-    token
+    access_token
   }));
   return next();
 }
