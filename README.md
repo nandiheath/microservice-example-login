@@ -48,9 +48,8 @@ Enviroment variables are listed in ```.env-sample```
 
 ### Exceptions
 
-The dockerized image is running with pm2-docker, which will monitor the process and restart if process failed.
+The dockerized image is running with [pm2-docker](http://pm2.keymetrics.io/) , which will monitor the process and restart if process failed.
 The settings such as restart count are stored inside ```server.config.js```
-[link to pm2](https://github.com/pm2)
 
 ## TODOs
 
