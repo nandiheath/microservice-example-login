@@ -1,5 +1,4 @@
 import * as restify from 'restify';
-import * as mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import * as passport from 'passport';
 import { ERROR_SERVER_EXCEPTION } from './utils/api_error';
