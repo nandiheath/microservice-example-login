@@ -2,6 +2,7 @@ import * as restify from 'restify';
 import * as dotenv from 'dotenv';
 import * as passport from 'passport';
 import { ERROR_SERVER_EXCEPTION } from './utils/api_error';
+import { SERVER_PORT } from './common/env'
 
 // Get the env variables
 dotenv.config();
@@ -16,7 +17,6 @@ import {
 import './auth/passport';
 
 const server = restify.createServer({
-  name: 'myapp',
   version: '1.0.0',
 });
 
@@ -25,13 +25,13 @@ server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 server.use(passport.initialize());
 
-//
-if (LOGGER_LEVEL === 'debug') {
-  server.use((req, res, next) => {
-    logger.debug(req);
-    next();
-  });
-}
+// For logging the incoming requests
+// if (LOGGER_LEVEL === 'debug') {
+//   server.use((req, res, next) => {
+//     logger.debug(req);
+//     next();
+//   });
+// }
 
 route(server);
 
@@ -56,8 +56,8 @@ server.on('restifyError', (req, res, err, callback) => {
   return callback();
 });
 
-server.listen(1337, () => {
-  logger.info(`${server.name} listening at ${server.url}`);
+server.listen(SERVER_PORT, () => {
+  logger.info(`server istening at ${server.url}`);
 });
 
 export default server;
