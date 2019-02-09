@@ -12,7 +12,7 @@ import PersistenceAdapter from './../persistence/persistence_adapter';
  * @param {*} next
  */
 export const login = async (req, res, next) => {
-  const { username, password }: { username: string, password: string }= req.body;
+  const { username, password }: { username: string, password: string } = req.body;
   // TODO: may be use a library to validate the request
   if (username === undefined) {
     throw InvalidRequestError('username field is missing');
@@ -23,7 +23,7 @@ export const login = async (req, res, next) => {
   }
 
   // Will throw user not found error
-  const user:User = await PersistenceAdapter.getUserByUsername(username);
+  const user: User = await PersistenceAdapter.getUserByUsername(username);
   let authenticated = false;
   if (user !== null) {
     authenticated = await user.verifyPassword(req.body.password);
@@ -33,7 +33,11 @@ export const login = async (req, res, next) => {
     throw UnthenticatedRequestError();
   } else {
     const access_token = await sign(user);
-    res.send(formatResponse({ user, access_token }));
+    res.send(formatResponse({
+      user: {
+        username: user.username
+      }, access_token
+    }));
     return next();
   }
 }
@@ -60,7 +64,9 @@ export const register = async (req, res, next) => {
 
   const access_token = await sign(user);
   res.send(formatResponse({
-    user,
+    user: {
+      username: user.username
+    },
     access_token
   }));
   return next();
