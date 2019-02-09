@@ -6,11 +6,16 @@ import server from '../../src/server';
 
 import { ERROR_ENTITY_INVALID_REQUEST, ERROR_USER_ALREADY_EXISTS,
   ERROR_TOKEN_EXPIRED, ERROR_WRONG_CREDENTIAL } from '../../src/utils/api_error';
+import pa from './../../src/persistence/persistence_adapter';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('api', () => {
+
+  afterEach(() => {
+    pa.cleanup();
+  });
 
   describe('/register', () => {
 

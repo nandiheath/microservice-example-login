@@ -2,6 +2,7 @@ import IUser from '../models/user';
 import MemoryStorageAdapter from './memory_storage_adapter';
 
 export interface IPersistenceAdapter {
+  cleanup(): void;
   insertUser(user: IUser): Promise<void>;
   getUserByUsername(username:string): Promise<IUser>;
 };

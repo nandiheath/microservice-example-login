@@ -9,6 +9,10 @@ class MemoryStorageAdapter implements IPersistenceAdapter {
     this.users = {};
   }
 
+  cleanup() {
+    this.users = {};
+  }
+
   async insertUser(user: IUser): Promise<void>{
     if (this.users[user.username] !== undefined) {
       throw UserAlreadyExistsError();
