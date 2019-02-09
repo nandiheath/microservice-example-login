@@ -1,5 +1,5 @@
 {
-  "name": "oibs-api",
+  "name": "microservice-example-login",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -36,7 +36,8 @@
   "scripts": {
     "test": "mocha --require ts-node/register --recursive ./test/**/*.ts",
     "compile": "tsc",
-    "dev": "nodemon -e ts --exec \"npm run compile\""
+    "dev": "nodemon -e ts --exec \"npm run compile\"",
+    "doc": "apidoc -o docs -f \".*\\.ts$\""
   },
   "author": "Nandi Wong",
   "license": "ISC"
