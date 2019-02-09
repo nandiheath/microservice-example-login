@@ -1,7 +1,7 @@
 # microservice-example-login
 
 This project is a demo for running a HTTP server that serve ```/login``` and ```/register``` endpoints.
-For details please read the [API documents]().
+For details please read the [API documents](https://nandiheath.github.io/microservice-example-login/).
 
 ## Concept
 
